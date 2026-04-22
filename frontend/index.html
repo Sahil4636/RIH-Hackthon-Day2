@@ -512,11 +512,11 @@
   <div class="shell">
     <section class="hero">
       <article class="hero-card">
-        <div class="eyebrow">Shelf Visibility Intelligence</div>
+        <div class="eyebrow">Shelf Monitoring</div>
         <h1>Count visible products from a single shelf photo.</h1>
         <p class="lead">
-          ShelfVision is a simple hackathon prototype for shelf monitoring. Upload one shelf image and the system estimates
-          visible product facings, highlights low-stock gaps, and gives a quick shelf health score.
+          ShelfVision helps teams review a shelf photo, estimate visible product facings, highlight low-stock gaps,
+          and understand overall shelf condition at a glance.
         </p>
         <div class="hero-grid">
           <div class="mini">
@@ -528,42 +528,19 @@
             <span>Counts visible product facings instead of trying to identify exact brands.</span>
           </div>
           <div class="mini">
-            <strong>Hackathon-ready dashboard</strong>
+            <strong>Clear shelf overview</strong>
             <span>Shows counts, gaps, alerts, and annotated output in one place.</span>
           </div>
         </div>
       </article>
-
-      <aside class="hero-card side-card">
-        <div>
-          <h2>3-Hour Demo Flow</h2>
-          <p class="lead" style="margin:10px 0 0; font-size:0.98rem;">
-            Use the controls below to upload one image, count visible products, and show low-stock gaps.
-          </p>
-        </div>
-        <div class="stack">
-          <div class="statline">
-            <span class="muted">API Base</span>
-            <b class="mono" id="apiBase">http://localhost:8000</b>
-          </div>
-          <div class="statline">
-            <span class="muted">Current Shelf</span>
-            <b id="heroShelf">shelf_demo</b>
-          </div>
-          <div class="statline">
-            <span class="muted">Last Scan</span>
-            <b id="heroScanTime">No scan yet</b>
-          </div>
-        </div>
-      </aside>
     </section>
 
     <section class="layout">
       <aside class="panel">
-        <div class="panel-title">
+          <div class="panel-title">
           <div>
             <h3>Control Center</h3>
-            <p>Keep the prototype simple: upload, analyze, and present counts plus gaps.</p>
+            <p>Upload a shelf image, run analysis, and review counts plus gaps.</p>
           </div>
         </div>
 
@@ -600,7 +577,7 @@
             <div class="step">
               <small>Step 3</small>
               <strong>Review low-stock gaps</strong>
-              <span class="muted">Show uncovered regions, shelf score, and a quick scan summary to judges.</span>
+              <span class="muted">Review uncovered regions, shelf score, and the latest scan summary.</span>
             </div>
           </div>
         </div>
@@ -629,8 +606,8 @@
             </div>
             <div class="metric">
               <div class="value" id="metricCompliance">-</div>
-              <div class="label">Layout Score</div>
-              <div class="sub">Optional grid-based layout check</div>
+              <div class="label">Visible Count</div>
+              <div class="sub">Estimated visible product facings in the image</div>
             </div>
             <div class="metric">
               <div class="value" id="metricVisibility">-</div>
@@ -657,8 +634,8 @@
           <article class="panel">
             <div class="panel-title">
               <div>
-                <h3>Pitch Snapshot</h3>
-                <p>Fast summary for judges, managers, or store staff.</p>
+                <h3>Latest Summary</h3>
+                <p>Fast summary for managers, operators, or store staff.</p>
               </div>
             </div>
             <div class="summary-card">
@@ -673,7 +650,7 @@
             <div class="panel-title">
               <div>
                 <h3>Visible Quantity Summary</h3>
-                <p>Estimated product facings by shelf row plus quick prototype insights.</p>
+                <p>Estimated product facings by shelf row plus a quick shelf summary.</p>
               </div>
             </div>
             <div id="zoneTable"></div>
@@ -739,15 +716,12 @@
     };
 
     const el = {
-      apiBase: document.getElementById("apiBase"),
       shelfId: document.getElementById("shelfId"),
       imageFile: document.getElementById("imageFile"),
       analyzeBtn: document.getElementById("analyzeBtn"),
       refreshBtn: document.getElementById("refreshBtn"),
       healthBtn: document.getElementById("healthBtn"),
       status: document.getElementById("status"),
-      heroShelf: document.getElementById("heroShelf"),
-      heroScanTime: document.getElementById("heroScanTime"),
       overallBadge: document.getElementById("overallBadge"),
       metricOverall: document.getElementById("metricOverall"),
       metricOccupancy: document.getElementById("metricOccupancy"),
@@ -765,8 +739,6 @@
       healthBlock: document.getElementById("healthBlock"),
       statsBlock: document.getElementById("statsBlock")
     };
-
-    el.apiBase.textContent = API_BASE;
 
     function setStatus(message, type = "info") {
       el.status.textContent = message;
@@ -903,8 +875,8 @@
             <div><div class="tiny">Average health</div><div>${escapeHtml(s.avg_health)}</div></div>
             <div><div class="tiny">Lowest health</div><div>${escapeHtml(s.min_health)}</div></div>
             <div><div class="tiny">Highest health</div><div>${escapeHtml(s.max_health)}</div></div>
-            <div><div class="tiny">Out-of-stock events</div><div>${escapeHtml(s.total_oos_events)}</div></div>
-            <div><div class="tiny">Violations</div><div>${escapeHtml(s.total_violations)}</div></div>
+            <div><div class="tiny">Low-stock gaps</div><div>${escapeHtml(s.total_oos_events)}</div></div>
+            <div><div class="tiny">Layout mismatches</div><div>${escapeHtml(s.total_violations)}</div></div>
           </div>
         </div>
       `;
@@ -924,10 +896,9 @@
 
       const insights = deriveShelfInsights(data);
 
-      el.heroScanTime.textContent = formatDate(data.scanned_at);
       el.metricOverall.textContent = formatScore(data.health_score?.overall);
       el.metricOccupancy.textContent = formatScore(data.health_score?.occupancy_score);
-      el.metricCompliance.textContent = formatScore(data.health_score?.compliance_score);
+      el.metricCompliance.textContent = String(insights.totalVisible);
       el.metricVisibility.textContent = formatScore(data.health_score?.visibility_score);
       el.metricSummary.textContent = data.health_score?.summary || "No summary available.";
       el.overallBadge.className = `badge ${getSeverityClass(data.health_score?.severity)}`;
@@ -944,11 +915,11 @@
       if (insights.totalVisible > 0) issues.push(`Estimated ${insights.totalVisible} visible product facings in the image.`);
       if (insights.weakestRow) issues.push(`Row ${insights.weakestRow.row} looks weakest with only ${insights.weakestRow.count} visible products.`);
       if (data.oos_count > 0) issues.push(`Detected ${data.oos_count} low-stock gap zone(s).`);
-      if (!data.planogram_available) issues.push("No layout grid was used, which is fine for this counting-focused prototype.");
+      if (!data.planogram_available) issues.push("No layout grid is being used for this shelf.");
       if ((data.health_score?.visibility_score || 0) < 65) issues.push("Visibility confidence is low, which may indicate occlusion or poor image quality.");
 
       el.issueList.innerHTML = issues.length
-        ? issues.map((item) => `<div class="list-item"><strong>Action Point</strong><span>${escapeHtml(item)}</span></div>`).join("")
+        ? issues.map((item) => `<div class="list-item"><strong>Observation</strong><span>${escapeHtml(item)}</span></div>`).join("")
         : `<div class="list-item"><strong>Healthy Shelf</strong><span>No major issues detected in the latest scan.</span></div>`;
 
       if (data.annotated_image_url) {
@@ -1104,7 +1075,6 @@
 
     async function refreshShelfData() {
       const shelfId = currentShelf();
-      el.heroShelf.textContent = shelfId;
       setStatus(`Refreshing shelf data for ${shelfId}...`);
 
       const [stats, history, alerts] = await Promise.all([
@@ -1131,7 +1101,6 @@
       }
 
       const shelfId = currentShelf();
-      el.heroShelf.textContent = shelfId;
       el.analyzeBtn.disabled = true;
       setStatus(`Uploading image and analyzing ${shelfId}...`);
 
@@ -1161,9 +1130,6 @@
       }
     }
 
-    el.shelfId.addEventListener("input", () => {
-      el.heroShelf.textContent = currentShelf();
-    });
     el.analyzeBtn.addEventListener("click", analyzeShelf);
     el.refreshBtn.addEventListener("click", refreshShelfData);
     el.healthBtn.addEventListener("click", checkHealth);
