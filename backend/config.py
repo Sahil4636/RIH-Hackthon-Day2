@@ -19,10 +19,16 @@ class Settings(BaseSettings):
 
     # ML
     YOLO_MODEL: str = "yolov8n.pt"
+    SKU110K_MODEL: str = "sku110k_dense.pt"
     DEVICE: str = "cuda"
     CONFIDENCE_THRESHOLD: float = 0.45
     IOU_THRESHOLD: float = 0.5
     INPUT_SIZE: int = 640
+    DENSE_CONFIDENCE_THRESHOLD: float = 0.18
+    DENSE_IOU_THRESHOLD: float = 0.35
+    ENABLE_DENSE_TILING: bool = True
+    DENSE_TILE_SIZE: int = 960
+    DENSE_TILE_OVERLAP: float = 0.25
 
     # Thresholds
     SHELF_HEALTH_WARN: int = 70
