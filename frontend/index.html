@@ -1,0 +1,1180 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ShelfVision | Retail Shelf Intelligence</title>
+  <style>
+    :root {
+      --bg: #f4efe7;
+      --panel: rgba(255, 251, 247, 0.9);
+      --panel-strong: #fffdfa;
+      --ink: #1e1a17;
+      --muted: #675f57;
+      --line: rgba(66, 42, 18, 0.12);
+      --brand: #c4541f;
+      --brand-dark: #8c3212;
+      --accent: #1f6b5f;
+      --accent-soft: #d7efe8;
+      --warn: #f0b429;
+      --danger: #c53d2f;
+      --ok: #23824f;
+      --shadow: 0 24px 60px rgba(92, 54, 22, 0.12);
+      --radius: 24px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(255, 184, 108, 0.45), transparent 26%),
+        radial-gradient(circle at top right, rgba(73, 174, 143, 0.18), transparent 24%),
+        linear-gradient(180deg, #f7f0e8 0%, #f1e8de 38%, #f7f3ed 100%);
+      font-family: Georgia, "Times New Roman", serif;
+    }
+
+    .shell {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 28px 20px 56px;
+    }
+
+    .hero {
+      display: grid;
+      gap: 24px;
+      grid-template-columns: 1.3fr 0.9fr;
+      align-items: stretch;
+    }
+
+    .hero-card,
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      border-radius: var(--radius);
+      backdrop-filter: blur(10px);
+    }
+
+    .hero-card {
+      padding: 32px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-card::after {
+      content: "";
+      position: absolute;
+      inset: auto -40px -40px auto;
+      width: 220px;
+      height: 220px;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(196, 84, 31, 0.2), transparent 68%);
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(196, 84, 31, 0.09);
+      color: var(--brand-dark);
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    h1, h2, h3 {
+      margin: 0;
+      font-weight: 700;
+    }
+
+    h1 {
+      margin-top: 18px;
+      font-size: clamp(2.4rem, 4vw, 4.6rem);
+      line-height: 0.94;
+      max-width: 12ch;
+    }
+
+    .lead {
+      margin: 18px 0 26px;
+      max-width: 64ch;
+      color: var(--muted);
+      font-size: 1.04rem;
+      line-height: 1.7;
+    }
+
+    .hero-grid {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .mini {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.72);
+    }
+
+    .mini strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 1rem;
+    }
+
+    .mini span {
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+
+    .side-card {
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .stack {
+      display: grid;
+      gap: 14px;
+    }
+
+    .statline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: var(--panel-strong);
+      border: 1px solid var(--line);
+    }
+
+    .statline b {
+      font-size: 1.4rem;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .layout {
+      display: grid;
+      gap: 20px;
+      grid-template-columns: 380px minmax(0, 1fr);
+      margin-top: 22px;
+    }
+
+    .panel {
+      padding: 22px;
+    }
+
+    .panel-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .panel-title p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 0.93rem;
+    }
+
+    .controls {
+      display: grid;
+      gap: 14px;
+    }
+
+    .field {
+      display: grid;
+      gap: 7px;
+    }
+
+    label {
+      font-size: 0.82rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="file"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: #fffdfa;
+      color: var(--ink);
+      font: inherit;
+    }
+
+    textarea {
+      min-height: 88px;
+      resize: vertical;
+    }
+
+    .btn-row {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    button {
+      border: 0;
+      border-radius: 14px;
+      padding: 12px 14px;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 140ms ease, opacity 140ms ease, box-shadow 140ms ease;
+    }
+
+    button:hover { transform: translateY(-1px); }
+    button:disabled { opacity: 0.6; cursor: wait; transform: none; }
+
+    .primary {
+      color: #fff;
+      background: linear-gradient(135deg, var(--brand) 0%, var(--brand-dark) 100%);
+      box-shadow: 0 12px 24px rgba(140, 50, 18, 0.22);
+    }
+
+    .secondary {
+      background: #efe5db;
+      color: var(--ink);
+    }
+
+    .ghost {
+      background: #e0efe9;
+      color: #134b42;
+    }
+
+    .status {
+      min-height: 22px;
+      font-size: 0.94rem;
+      color: var(--accent);
+    }
+
+    .workflow {
+      display: grid;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .step {
+      display: grid;
+      gap: 5px;
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.7);
+      border: 1px solid var(--line);
+    }
+
+    .step small {
+      color: var(--brand-dark);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .main-grid {
+      display: grid;
+      gap: 20px;
+    }
+
+    .metrics {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .metric {
+      padding: 18px;
+      border-radius: 20px;
+      background: var(--panel-strong);
+      border: 1px solid var(--line);
+    }
+
+    .metric .value {
+      font-size: clamp(1.8rem, 3vw, 2.7rem);
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .metric .label {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .metric .sub {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .split {
+      display: grid;
+      gap: 20px;
+      grid-template-columns: 1.15fr 0.85fr;
+    }
+
+    .visual-stage {
+      display: grid;
+      gap: 16px;
+    }
+
+    .hero-image {
+      width: 100%;
+      min-height: 340px;
+      max-height: 560px;
+      object-fit: contain;
+      border-radius: 20px;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(135deg, rgba(31, 107, 95, 0.06), rgba(196, 84, 31, 0.06)),
+        repeating-linear-gradient(
+          90deg,
+          rgba(33, 25, 17, 0.03),
+          rgba(33, 25, 17, 0.03) 1px,
+          transparent 1px,
+          transparent 42px
+        ),
+        #fffdfa;
+      padding: 10px;
+    }
+
+    .summary-card {
+      display: grid;
+      gap: 12px;
+      padding: 18px;
+      border-radius: 20px;
+      background: #fffdfa;
+      border: 1px solid var(--line);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .badge.ok { background: #def4e6; color: var(--ok); }
+    .badge.warning { background: #fff1cc; color: #976200; }
+    .badge.critical,
+    .badge.error { background: #f9d8d4; color: var(--danger); }
+    .badge.info { background: #d7efe8; color: var(--accent); }
+
+    .list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .list-item {
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: #fffdfa;
+      border: 1px solid var(--line);
+    }
+
+    .list-item strong {
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .table-wrap {
+      overflow: auto;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: #fffdfa;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 640px;
+    }
+
+    th, td {
+      padding: 12px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--line);
+      font-size: 0.94rem;
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: rgba(239, 229, 219, 0.55);
+    }
+
+    .empty {
+      padding: 18px;
+      border-radius: 18px;
+      border: 1px dashed var(--line);
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.48);
+    }
+
+    .planogram-controls {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(4, 1fr);
+      margin-bottom: 16px;
+    }
+
+    .planogram-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .zone {
+      display: grid;
+      gap: 10px;
+      padding: 14px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: #fffdfa;
+    }
+
+    .zone-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+
+    .inline-grid {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .tiny {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .mono {
+      font-family: "Courier New", Courier, monospace;
+      font-size: 0.88rem;
+    }
+
+    @media (max-width: 1180px) {
+      .hero,
+      .layout,
+      .split {
+        grid-template-columns: 1fr;
+      }
+
+      .metrics {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 760px) {
+      .shell { padding: 16px 12px 42px; }
+      .hero-card,
+      .panel { padding: 18px; }
+      .hero-grid,
+      .btn-row,
+      .metrics,
+      .planogram-controls,
+      .inline-grid {
+        grid-template-columns: 1fr;
+      }
+
+      table { min-width: 520px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <section class="hero">
+      <article class="hero-card">
+        <div class="eyebrow">Shelf Visibility Intelligence</div>
+        <h1>Count visible products from a single shelf photo.</h1>
+        <p class="lead">
+          ShelfVision is a simple hackathon prototype for shelf monitoring. Upload one shelf image and the system estimates
+          visible product facings, highlights low-stock gaps, and gives a quick shelf health score.
+        </p>
+        <div class="hero-grid">
+          <div class="mini">
+            <strong>Out-of-stock detection</strong>
+            <span>Flags large visible gaps before they become missed sales.</span>
+          </div>
+          <div class="mini">
+            <strong>Visible quantity estimate</strong>
+            <span>Counts visible product facings instead of trying to identify exact brands.</span>
+          </div>
+          <div class="mini">
+            <strong>Hackathon-ready dashboard</strong>
+            <span>Shows counts, gaps, alerts, and annotated output in one place.</span>
+          </div>
+        </div>
+      </article>
+
+      <aside class="hero-card side-card">
+        <div>
+          <h2>3-Hour Demo Flow</h2>
+          <p class="lead" style="margin:10px 0 0; font-size:0.98rem;">
+            Use the controls below to upload one image, count visible products, and show low-stock gaps.
+          </p>
+        </div>
+        <div class="stack">
+          <div class="statline">
+            <span class="muted">API Base</span>
+            <b class="mono" id="apiBase">http://localhost:8000</b>
+          </div>
+          <div class="statline">
+            <span class="muted">Current Shelf</span>
+            <b id="heroShelf">shelf_demo</b>
+          </div>
+          <div class="statline">
+            <span class="muted">Last Scan</span>
+            <b id="heroScanTime">No scan yet</b>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="layout">
+      <aside class="panel">
+        <div class="panel-title">
+          <div>
+            <h3>Control Center</h3>
+            <p>Keep the prototype simple: upload, analyze, and present counts plus gaps.</p>
+          </div>
+        </div>
+
+        <div class="controls">
+          <div class="field">
+            <label for="shelfId">Shelf ID</label>
+            <input id="shelfId" type="text" value="shelf_demo" />
+          </div>
+
+          <div class="field">
+            <label for="imageFile">Shelf Image</label>
+            <input id="imageFile" type="file" accept="image/png,image/jpeg,image/webp" />
+          </div>
+
+          <div class="btn-row">
+            <button id="analyzeBtn" class="primary">Analyze Shelf</button>
+            <button id="refreshBtn" class="secondary">Refresh Data</button>
+            <button id="healthBtn" class="ghost">Health Check</button>
+          </div>
+
+          <div id="status" class="status">Ready for analysis.</div>
+
+          <div class="workflow">
+            <div class="step">
+              <small>Step 1</small>
+              <strong>Upload a shelf photo</strong>
+              <span class="muted">Use a phone snapshot of the shelf you want to inspect.</span>
+            </div>
+            <div class="step">
+              <small>Step 2</small>
+              <strong>Count visible products</strong>
+              <span class="muted">The system estimates how many product facings are visible in each shelf row.</span>
+            </div>
+            <div class="step">
+              <small>Step 3</small>
+              <strong>Review low-stock gaps</strong>
+              <span class="muted">Show uncovered regions, shelf score, and a quick scan summary to judges.</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <main class="main-grid">
+        <section class="panel">
+          <div class="panel-title">
+            <div>
+              <h3>Live Shelf Summary</h3>
+              <p>Simple score built from visible coverage, optional layout checks, and detection confidence.</p>
+            </div>
+            <span id="overallBadge" class="badge info">Waiting for scan</span>
+          </div>
+
+          <div class="metrics">
+            <div class="metric">
+              <div class="value" id="metricOverall">-</div>
+              <div class="label">Shelf Health</div>
+              <div class="sub" id="metricSummary">Run an analysis to generate insights.</div>
+            </div>
+            <div class="metric">
+              <div class="value" id="metricOccupancy">-</div>
+              <div class="label">Coverage</div>
+              <div class="sub">How full the shelf looks overall</div>
+            </div>
+            <div class="metric">
+              <div class="value" id="metricCompliance">-</div>
+              <div class="label">Layout Score</div>
+              <div class="sub">Optional grid-based layout check</div>
+            </div>
+            <div class="metric">
+              <div class="value" id="metricVisibility">-</div>
+              <div class="label">Visibility</div>
+              <div class="sub">How clearly product facings were detected</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="split">
+          <article class="panel visual-stage">
+            <div class="panel-title">
+              <div>
+                <h3>Annotated Shelf View</h3>
+                <p>Bounding boxes highlight detected products and empty regions.</p>
+              </div>
+            </div>
+            <img id="annotatedImage" class="hero-image" alt="Annotated shelf output" />
+            <div id="imagePlaceholder" class="empty">
+              Upload a shelf image and run analysis to see the annotated output here.
+            </div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-title">
+              <div>
+                <h3>Pitch Snapshot</h3>
+                <p>Fast summary for judges, managers, or store staff.</p>
+              </div>
+            </div>
+            <div class="summary-card">
+              <div id="healthCard"></div>
+              <div id="issueList" class="list"></div>
+            </div>
+          </article>
+        </section>
+
+        <section class="split">
+          <article class="panel">
+            <div class="panel-title">
+              <div>
+                <h3>Visible Quantity Summary</h3>
+                <p>Estimated product facings by shelf row plus quick prototype insights.</p>
+              </div>
+            </div>
+            <div id="zoneTable"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-title">
+              <div>
+                <h3>Detections</h3>
+                <p>Visible product facings and low-stock gaps found in the uploaded image.</p>
+              </div>
+            </div>
+            <div id="detectionTable"></div>
+          </article>
+        </section>
+
+        <section class="split">
+          <article class="panel">
+            <div class="panel-title">
+              <div>
+                <h3>Alerts</h3>
+                <p>Operational actions generated from the latest and historical scans.</p>
+              </div>
+            </div>
+            <div id="alertsList"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-title">
+              <div>
+                <h3>Shelf History</h3>
+                <p>Track how a single shelf performs over time.</p>
+              </div>
+            </div>
+            <div id="historyTable"></div>
+          </article>
+        </section>
+
+        <section class="panel">
+          <div class="panel-title">
+            <div>
+              <h3>Health + Aggregate Stats</h3>
+              <p>Backend status and cumulative shelf metrics.</p>
+            </div>
+          </div>
+          <div class="split">
+            <div id="healthBlock"></div>
+            <div id="statsBlock"></div>
+          </div>
+        </section>
+      </main>
+    </section>
+  </div>
+
+  <script>
+    const API_BASE = "http://localhost:8000";
+    const state = {
+      latestAnalysis: null,
+      latestHealth: null,
+      latestStats: null,
+      latestAlerts: [],
+      latestHistory: []
+    };
+
+    const el = {
+      apiBase: document.getElementById("apiBase"),
+      shelfId: document.getElementById("shelfId"),
+      imageFile: document.getElementById("imageFile"),
+      analyzeBtn: document.getElementById("analyzeBtn"),
+      refreshBtn: document.getElementById("refreshBtn"),
+      healthBtn: document.getElementById("healthBtn"),
+      status: document.getElementById("status"),
+      heroShelf: document.getElementById("heroShelf"),
+      heroScanTime: document.getElementById("heroScanTime"),
+      overallBadge: document.getElementById("overallBadge"),
+      metricOverall: document.getElementById("metricOverall"),
+      metricOccupancy: document.getElementById("metricOccupancy"),
+      metricCompliance: document.getElementById("metricCompliance"),
+      metricVisibility: document.getElementById("metricVisibility"),
+      metricSummary: document.getElementById("metricSummary"),
+      annotatedImage: document.getElementById("annotatedImage"),
+      imagePlaceholder: document.getElementById("imagePlaceholder"),
+      healthCard: document.getElementById("healthCard"),
+      issueList: document.getElementById("issueList"),
+      zoneTable: document.getElementById("zoneTable"),
+      detectionTable: document.getElementById("detectionTable"),
+      alertsList: document.getElementById("alertsList"),
+      historyTable: document.getElementById("historyTable"),
+      healthBlock: document.getElementById("healthBlock"),
+      statsBlock: document.getElementById("statsBlock")
+    };
+
+    el.apiBase.textContent = API_BASE;
+
+    function setStatus(message, type = "info") {
+      el.status.textContent = message;
+      el.status.style.color = type === "error" ? "var(--danger)" : "var(--accent)";
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;");
+    }
+
+    function getSeverityClass(value) {
+      const severity = String(value || "info").toLowerCase();
+      if (severity === "ok" || severity === "healthy" || severity === "compliant") return "ok";
+      if (severity === "warning") return "warning";
+      if (severity === "critical" || severity === "violation" || severity === "error" || severity === "empty") return "critical";
+      return "info";
+    }
+
+    function formatScore(value) {
+      return typeof value === "number" ? value.toFixed(1) : "-";
+    }
+
+    function formatDate(value) {
+      if (!value) return "No scan yet";
+      const date = new Date(value);
+      return Number.isNaN(date.getTime()) ? value : date.toLocaleString();
+    }
+
+    async function getJson(path) {
+      const response = await fetch(`${API_BASE}${path}`);
+      if (!response.ok) {
+        throw new Error(`${path} failed with status ${response.status}`);
+      }
+      return response.json();
+    }
+
+    function buildEmpty(message) {
+      return `<div class="empty">${escapeHtml(message)}</div>`;
+    }
+
+    function countDetectionsByRows(detections) {
+      if (!Array.isArray(detections) || !detections.length) {
+        return [];
+      }
+
+      const centers = detections
+        .map((item) => ({
+          y: ((item.box?.[1] || 0) + (item.box?.[3] || 0)) / 2
+        }))
+        .sort((a, b) => a.y - b.y);
+
+      const rows = [];
+      centers.forEach((point) => {
+        const existing = rows.find((row) => Math.abs(row.center - point.y) < 0.09);
+        if (existing) {
+          existing.values.push(point.y);
+          existing.center = existing.values.reduce((sum, value) => sum + value, 0) / existing.values.length;
+        } else {
+          rows.push({ center: point.y, values: [point.y] });
+        }
+      });
+
+      rows.sort((a, b) => a.center - b.center);
+
+      return rows.map((row, index, array) => {
+        const rowStart = index === 0 ? 0 : (array[index - 1].center + row.center) / 2;
+        const rowEnd = index === array.length - 1 ? 1 : (row.center + array[index + 1].center) / 2;
+        const count = detections.filter((item) => {
+          const centerY = ((item.box?.[1] || 0) + (item.box?.[3] || 0)) / 2;
+          return centerY >= rowStart && centerY < rowEnd;
+        }).length;
+
+        return {
+          row: index + 1,
+          count,
+          band: `${Math.round(rowStart * 100)}% - ${Math.round(rowEnd * 100)}%`
+        };
+      });
+    }
+
+    function deriveShelfInsights(data) {
+      const rowCounts = countDetectionsByRows(data?.detections || []);
+      const totalVisible = (data?.detections || []).length;
+      const avgPerRow = rowCounts.length
+        ? Math.round((totalVisible / rowCounts.length) * 10) / 10
+        : totalVisible;
+      const weakestRow = rowCounts.length
+        ? rowCounts.reduce((lowest, row) => row.count < lowest.count ? row : lowest, rowCounts[0])
+        : null;
+
+      return {
+        totalVisible,
+        rowCounts,
+        avgPerRow,
+        weakestRow
+      };
+    }
+
+    function renderHealth() {
+      if (!state.latestHealth) {
+        el.healthBlock.innerHTML = buildEmpty("Run a health check to confirm the backend and model are available.");
+        return;
+      }
+
+      const data = state.latestHealth;
+      const badgeClass = data.status === "ok" ? "ok" : "critical";
+      el.healthBlock.innerHTML = `
+        <div class="summary-card">
+          <span class="badge ${badgeClass}">${escapeHtml(data.status)}</span>
+          <strong>${data.gpu_available ? "GPU acceleration ready" : "Running on CPU"}</strong>
+          <div class="muted">Model loaded: ${data.model_loaded ? "Yes" : "No"}</div>
+          <div class="muted">Device: ${escapeHtml(data.gpu_name || "CPU only")}</div>
+        </div>
+      `;
+    }
+
+    function renderStats() {
+      if (!state.latestStats || state.latestStats.error) {
+        const message = state.latestStats?.error || "No historical shelf stats yet.";
+        el.statsBlock.innerHTML = buildEmpty(message);
+        return;
+      }
+
+      const s = state.latestStats;
+      el.statsBlock.innerHTML = `
+        <div class="summary-card">
+          <strong>${escapeHtml(s.shelf_id)}</strong>
+          <div class="inline-grid">
+            <div><div class="tiny">Total scans</div><div>${escapeHtml(s.total_scans)}</div></div>
+            <div><div class="tiny">Average health</div><div>${escapeHtml(s.avg_health)}</div></div>
+            <div><div class="tiny">Lowest health</div><div>${escapeHtml(s.min_health)}</div></div>
+            <div><div class="tiny">Highest health</div><div>${escapeHtml(s.max_health)}</div></div>
+            <div><div class="tiny">Out-of-stock events</div><div>${escapeHtml(s.total_oos_events)}</div></div>
+            <div><div class="tiny">Violations</div><div>${escapeHtml(s.total_violations)}</div></div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderAnalysis() {
+      const data = state.latestAnalysis;
+      if (!data) {
+        el.healthCard.innerHTML = buildEmpty("Latest scan summary will appear here.");
+        el.issueList.innerHTML = buildEmpty("No issues to review yet.");
+        el.zoneTable.innerHTML = buildEmpty("Visible quantity summary will appear here after a scan.");
+        el.detectionTable.innerHTML = buildEmpty("No detections yet.");
+        el.annotatedImage.style.display = "none";
+        el.imagePlaceholder.style.display = "block";
+        return;
+      }
+
+      const insights = deriveShelfInsights(data);
+
+      el.heroScanTime.textContent = formatDate(data.scanned_at);
+      el.metricOverall.textContent = formatScore(data.health_score?.overall);
+      el.metricOccupancy.textContent = formatScore(data.health_score?.occupancy_score);
+      el.metricCompliance.textContent = formatScore(data.health_score?.compliance_score);
+      el.metricVisibility.textContent = formatScore(data.health_score?.visibility_score);
+      el.metricSummary.textContent = data.health_score?.summary || "No summary available.";
+      el.overallBadge.className = `badge ${getSeverityClass(data.health_score?.severity)}`;
+      el.overallBadge.textContent = data.health_score?.severity || "info";
+
+      el.healthCard.innerHTML = `
+        <span class="badge ${getSeverityClass(data.health_score?.severity)}">${escapeHtml(data.health_score?.severity || "info")}</span>
+        <strong>${escapeHtml(data.health_score?.summary || "No summary available.")}</strong>
+        <div class="muted">Shelf ID: ${escapeHtml(data.shelf_id)}</div>
+        <div class="muted">Visible products: ${escapeHtml(insights.totalVisible)} | Low-stock gaps: ${escapeHtml(data.oos_count)} | Estimated rows: ${escapeHtml(insights.rowCounts.length || 0)}</div>
+      `;
+
+      const issues = [];
+      if (insights.totalVisible > 0) issues.push(`Estimated ${insights.totalVisible} visible product facings in the image.`);
+      if (insights.weakestRow) issues.push(`Row ${insights.weakestRow.row} looks weakest with only ${insights.weakestRow.count} visible products.`);
+      if (data.oos_count > 0) issues.push(`Detected ${data.oos_count} low-stock gap zone(s).`);
+      if (!data.planogram_available) issues.push("No layout grid was used, which is fine for this counting-focused prototype.");
+      if ((data.health_score?.visibility_score || 0) < 65) issues.push("Visibility confidence is low, which may indicate occlusion or poor image quality.");
+
+      el.issueList.innerHTML = issues.length
+        ? issues.map((item) => `<div class="list-item"><strong>Action Point</strong><span>${escapeHtml(item)}</span></div>`).join("")
+        : `<div class="list-item"><strong>Healthy Shelf</strong><span>No major issues detected in the latest scan.</span></div>`;
+
+      if (data.annotated_image_url) {
+        el.annotatedImage.src = `${API_BASE}${data.annotated_image_url}`;
+        el.annotatedImage.style.display = "block";
+        el.imagePlaceholder.style.display = "none";
+      }
+
+      const detectionRows = [
+        ...(data.detections || []).map((item, index) => ({
+          type: "Visible product",
+          label: item.label === "product" || String(item.label).startsWith("product_facing_") ? "product facing" : item.label,
+          confidence: `${Math.round((item.confidence || 0) * 100)}%`,
+          detail: `${Math.round((item.area_ratio || 0) * 1000) / 10}% area`,
+          zone: `#${index + 1}`
+        })),
+        ...(data.empty_zones || []).map((item, index) => ({
+          type: "Low-stock gap",
+          label: "gap detected",
+          confidence: "-",
+          detail: `${Math.round((item.area_ratio || 0) * 1000) / 10}% area`,
+          zone: `Gap ${index + 1}`
+        }))
+      ];
+
+      el.detectionTable.innerHTML = detectionRows.length ? `
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Label</th>
+                <th>Confidence</th>
+                <th>Coverage</th>
+                <th>Ref</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${detectionRows.map((row) => `
+                <tr>
+                  <td>${escapeHtml(row.type)}</td>
+                  <td>${escapeHtml(row.label)}</td>
+                  <td>${escapeHtml(row.confidence)}</td>
+                  <td>${escapeHtml(row.detail)}</td>
+                  <td>${escapeHtml(row.zone)}</td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>
+      ` : buildEmpty("No product facings were returned for the latest scan.");
+
+      el.zoneTable.innerHTML = insights.rowCounts.length ? `
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Row</th>
+                <th>Visible Products</th>
+                <th>Vertical Band</th>
+                <th>Status</th>
+                <th>Comment</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${insights.rowCounts.map((row) => `
+                <tr>
+                  <td>Row ${escapeHtml(row.row)}</td>
+                  <td>${escapeHtml(row.count)}</td>
+                  <td>${escapeHtml(row.band)}</td>
+                  <td><span class="badge ${row.count <= Math.max(1, insights.avgPerRow * 0.6) ? "warning" : "ok"}">${row.count <= Math.max(1, insights.avgPerRow * 0.6) ? "check" : "healthy"}</span></td>
+                  <td>${escapeHtml(row.count <= Math.max(1, insights.avgPerRow * 0.6) ? "This row is noticeably lighter than the others." : "Visible count looks consistent.")}</td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>
+      ` : buildEmpty("No row-wise count summary is available yet.");
+    }
+
+    function renderAlerts() {
+      if (!state.latestAlerts.length) {
+        el.alertsList.innerHTML = buildEmpty("No active alerts for this shelf yet.");
+        return;
+      }
+
+      el.alertsList.innerHTML = `<div class="list">${
+        state.latestAlerts.map((alert) => `
+          <div class="list-item">
+            <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;">
+              <div>
+                <strong>${escapeHtml(alert.alert_type)}</strong>
+                <div>${escapeHtml(alert.message)}</div>
+              </div>
+              <span class="badge ${getSeverityClass(alert.severity)}">${escapeHtml(alert.severity)}</span>
+            </div>
+            <div class="tiny" style="margin-top:8px;">${escapeHtml(formatDate(alert.created_at))}</div>
+          </div>
+        `).join("")
+      }</div>`;
+    }
+
+    function renderHistory() {
+      if (!Array.isArray(state.latestHistory) || !state.latestHistory.length) {
+        el.historyTable.innerHTML = buildEmpty("Run a few analyses to build scan history.");
+        return;
+      }
+
+      el.historyTable.innerHTML = `
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Scan</th>
+                <th>Health</th>
+                <th>OOS</th>
+                <th>Violations</th>
+                <th>Scanned At</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${state.latestHistory.map((item) => `
+                <tr>
+                  <td>#${escapeHtml(item.id)}</td>
+                  <td>${escapeHtml(item.health_score)}</td>
+                  <td>${escapeHtml(item.oos_count)}</td>
+                  <td>${escapeHtml(item.violation_count)}</td>
+                  <td>${escapeHtml(formatDate(item.created_at))}</td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function currentShelf() {
+      return el.shelfId.value.trim() || "shelf_demo";
+    }
+
+    async function checkHealth() {
+      setStatus("Checking backend health...");
+      try {
+        state.latestHealth = await getJson("/api/health");
+        renderHealth();
+        setStatus("Backend health check completed.");
+      } catch (error) {
+        state.latestHealth = { status: "error", message: error.message };
+        renderHealth();
+        setStatus(error.message, "error");
+      }
+    }
+
+    async function refreshShelfData() {
+      const shelfId = currentShelf();
+      el.heroShelf.textContent = shelfId;
+      setStatus(`Refreshing shelf data for ${shelfId}...`);
+
+      const [stats, history, alerts] = await Promise.all([
+        getJson(`/api/stats/${encodeURIComponent(shelfId)}`).catch((error) => ({ error: error.message })),
+        getJson(`/api/history/${encodeURIComponent(shelfId)}`).catch(() => []),
+        getJson(`/api/alerts?shelf_id=${encodeURIComponent(shelfId)}`).catch(() => [])
+      ]);
+
+      state.latestStats = stats;
+      state.latestHistory = Array.isArray(history) ? history : [];
+      state.latestAlerts = Array.isArray(alerts) ? alerts : [];
+
+      renderStats();
+      renderHistory();
+      renderAlerts();
+      setStatus(`Shelf data refreshed for ${shelfId}.`);
+    }
+
+    async function analyzeShelf() {
+      const file = el.imageFile.files[0];
+      if (!file) {
+        setStatus("Choose an image before running analysis.", "error");
+        return;
+      }
+
+      const shelfId = currentShelf();
+      el.heroShelf.textContent = shelfId;
+      el.analyzeBtn.disabled = true;
+      setStatus(`Uploading image and analyzing ${shelfId}...`);
+
+      try {
+        const form = new FormData();
+        form.append("shelf_id", shelfId);
+        form.append("file", file);
+
+        const response = await fetch(`${API_BASE}/api/analyze`, {
+          method: "POST",
+          body: form
+        });
+
+        if (!response.ok) {
+          const message = await response.text();
+          throw new Error(`Analysis failed with status ${response.status}: ${message}`);
+        }
+
+        state.latestAnalysis = await response.json();
+        renderAnalysis();
+        await refreshShelfData();
+        setStatus(`Analysis complete for ${shelfId}. Scan #${state.latestAnalysis.scan_id}.`);
+      } catch (error) {
+        setStatus(error.message, "error");
+      } finally {
+        el.analyzeBtn.disabled = false;
+      }
+    }
+
+    el.shelfId.addEventListener("input", () => {
+      el.heroShelf.textContent = currentShelf();
+    });
+    el.analyzeBtn.addEventListener("click", analyzeShelf);
+    el.refreshBtn.addEventListener("click", refreshShelfData);
+    el.healthBtn.addEventListener("click", checkHealth);
+
+    renderAnalysis();
+    renderAlerts();
+    renderHistory();
+    renderHealth();
+    renderStats();
+    checkHealth();
+    refreshShelfData();
+  </script>
+</body>
+</html>

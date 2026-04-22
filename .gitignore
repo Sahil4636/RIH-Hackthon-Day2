@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual Environment
+venv/
+.env/
+
+# Environment variables
+.env
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+
+# Model weights (IMPORTANT)
+*.pt
+
+# Data files
+data/
+*.jpg
+*.png
+
+# Temporary files
+*.tmp
+
+# Database
+*.db
+*.sqlite3
